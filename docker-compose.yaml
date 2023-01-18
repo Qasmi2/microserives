@@ -1,0 +1,79 @@
+version: "3"
+services:
+  server:
+    build: ./server
+    environment:
+      - webserver_port=3000
+      - AMQP_URL=rabbitmq:5672
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./server:/app
+    depends_on:
+      - "rabbitmq"
+    command:
+      ["sh", "./scripts/wait-for-it.sh", "rabbitmq:5672", "--", "npm", "start"]
+
+  user_service:
+    build: ./user_service
+    environment:
+      - AMQP_URL=rabbitmq:5672
+    depends_on:
+      - "rabbitmq"
+    volumes:
+      - ./user_service:/app
+    command:
+      ["sh", "./scripts/wait-for-it.sh", "rabbitmq:5672", "--", "npm", "start"]
+
+  # activity_service:
+  #   build: ./activity_service
+  #   environment:
+  #     - AMQP_URL=rabbitmq:5672
+  #   depends_on:
+  #     - "rabbitmq"
+  #   volumes:
+  #     - ./activity_service:/app
+  #   command:
+  #     ["sh", "./scripts/wait-for-it.sh", "rabbitmq:5672", "--", "npm", "start"]
+
+  # conversation_service:
+  #   build: ./conversation_service
+  #   environment:
+  #     - AMQP_URL=rabbitmq:5672
+  #   depends_on:
+  #     - "rabbitmq"
+  #   volumes:
+  #     - ./conversation_service:/app
+  #   command:
+  #     ["sh", "./scripts/wait-for-it.sh", "rabbitmq:5672", "--", "npm", "start"]
+
+  # push_notification_service:
+  #   build: ./push_notification_service
+  #   environment:
+  #     - AMQP_URL=rabbitmq:5672
+  #   depends_on:
+  #     - "rabbitmq"
+  #   volumes:
+  #     - ./push_notification_service:/app
+  #   command: ["sh","./scripts/wait-for-it.sh", "rabbitmq:5672", "--", "npm", "start"]
+
+  # email_delivery_service:
+  #   build: ./analytics_delivery_service
+  #   volumes:
+  #     - ./analytics_delivery_service:/app
+  #   command: ["npm", "start"]
+
+  # newsletter_service:
+  #   build: ./newsletter_service
+  #   environment:
+  #     - AMQP_URL=rabbitmq:5672
+  #   depends_on:
+  #     - "rabbitmq"
+  #   volumes:
+  #     - ./newsletter_service:/app
+  #   command: ["sh","./scripts/wait-for-it.sh", "rabbitmq:5672", "--", "npm", "start"]
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"

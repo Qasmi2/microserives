@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservice-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: youcan_backend
+  template:
+    metadata:
+      labels:
+        app: youcan_backend
+        tier: userservice-deployment
+    spec:
+      containers:
+        - name: userservice-deployment
+          image: kjdakfljkakflkakmazonaws.com/user:1.1.6
+          args:
+            - ./scripts/Entrypoint.sh
+          env:
+            - name: AMQP_URL
+              value: rabbitmq-service:8081

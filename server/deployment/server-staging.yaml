@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: newsservice
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: youcan_backend
+  template:
+    metadata:
+      labels:
+        app: youcan_backend
+        tier: newsservice
+    spec:
+      containers:
+        - name: newsservice
+          image: 771794352313.dkr.ecr.us-east-2.amazonaws.com/gateway:1.0.0
+          ports:
+            - containerPort: 3000
+          args:
+          - ./scripts/Entrypoint.sh
+          env:
+            - name: AMQP_URL 
+              value: 172.31.22.25:5672
